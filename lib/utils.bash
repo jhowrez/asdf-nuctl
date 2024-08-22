@@ -37,12 +37,13 @@ list_all_versions() {
 }
 
 download_release() {
-	local version filename url
+	local version filename url machine
 	version="$1"
 	filename="$2"
+	machine="$3"
 
 	# TODO: Adapt the release URL convention for nuctl
-	url="$GH_REPO/archive/v${version}.tar.gz"
+	url="$GH_REPO/releases/download/${version}/nuctl-${version}-${machine}"
 
 	echo "* Downloading $TOOL_NAME release $version..."
 	curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
@@ -59,7 +60,10 @@ install_version() {
 
 	(
 		mkdir -p "$install_path"
-		cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
+
+		ls $ASDF_DOWNLOAD_PATH
+		cp -r "$ASDF_DOWNLOAD_PATH"/nuctl "$install_path"
+		chmod +x $install_path/nuctl
 
 		# TODO: Assert nuctl executable exists.
 		local tool_cmd
